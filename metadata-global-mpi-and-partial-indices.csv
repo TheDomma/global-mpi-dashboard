@@ -1,0 +1,14 @@
+Field,Label,Value
+created,Created,2024-11-05T12:48:50.090762
+description,Description,"This resource contains standardised MPI estimates by first-level administrative unit (e.g. state, province) and also shows the proportion of people who are MPI poor and experience deprivations in each of the indicators by admin one unit."
+format,File Format,CSV
+download_url,Download URL,https://data.humdata.org/dataset/42b16840-3a56-4a20-9314-7aa171f1136c/resource/ef20310e-2821-4aa9-98a8-1950f45f10d0/download/global_mpi.csv
+id,Resource ID,ef20310e-2821-4aa9-98a8-1950f45f10d0
+last_modified,Updated,2026-03-05T01:08:05.925111
+metadata_modified,Metadata Updated,2026-03-05T01:08:19.321170
+microdata,Microdata,False
+dataset_id,Dataset ID,42b16840-3a56-4a20-9314-7aa171f1136c
+resource_type,Resource Type,file.upload
+name,Resource Name,Global MPI and Partial Indices
+mimetype,MIME Type,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+size,Size,161.2K
