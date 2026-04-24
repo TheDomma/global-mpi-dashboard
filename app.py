@@ -72,6 +72,15 @@ with st.expander("ℹ️ What do these metrics mean?"):
     * **Headcount Ratio:** The percentage of the population that is multidimensionally poor.
     * **Intensity of Deprivation:** The average percentage of dimensions in which poor people are deprived.
     """)
+# --- NEW: Dynamic Insights ---
+st.subheader("💡 Automated Insights")
+if not filtered_df.empty:
+    highest_region = filtered_df.loc[filtered_df['MPI'].idxmax()]
+    st.info(f"Based on your current filters, the region with the highest acute poverty is **{highest_region['Admin 1 Name']}** (in {highest_region['Country']}) with an MPI of **{highest_region['MPI']:.4f}** and **{highest_region['In Severe Poverty']:.1f}%** of its population in severe poverty.")
+else:
+    st.info("Adjust your filters to see automated insights.")
+
+st.divider()
 
 st.divider()
 
