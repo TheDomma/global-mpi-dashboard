@@ -65,6 +65,14 @@ col1.metric("Average MPI", f"{avg_mpi:.4f}")
 col2.metric("Avg Headcount Ratio", f"{avg_headcount:.2f}%")
 col3.metric("Avg Intensity of Deprivation", f"{avg_intensity:.2f}%")
 
+# --- NEW: Add an expander to explain the metrics to the audience ---
+with st.expander("ℹ️ What do these metrics mean?"):
+    st.markdown("""
+    * **MPI (Multidimensional Poverty Index):** A measure of acute poverty that captures both the incidence and intensity of deprivation.
+    * **Headcount Ratio:** The percentage of the population that is multidimensionally poor.
+    * **Intensity of Deprivation:** The average percentage of dimensions in which poor people are deprived.
+    """)
+
 st.divider()
 
 # --- Tabs for Visualizations ---
