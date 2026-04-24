@@ -50,7 +50,7 @@ col3.metric("Avg Intensity of Deprivation", f"{avg_intensity:.2f}%")
 st.divider()
 
 # --- Tabs for Visualizations ---
-tab1, tab2, tab3 = st.tabs(["📊 Regional Analysis", "📈 Poverty Correlation", "🗄️ Raw Data"])
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Regional Analysis", "📈 Poverty Correlation", "🗺️ Global Map", "🗄️ Raw Data"])
 
 with tab1:
     st.subheader("Top 10 Regions by MPI")
@@ -65,7 +65,7 @@ with tab1:
             title='Highest MPI Regions in Selection',
             labels={'Admin 1 Name': 'Region', 'MPI': 'MPI Value'}
         )
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True, key="bar_chart")
     else:
         st.warning("No data available for this selection.")
 
@@ -80,10 +80,30 @@ with tab2:
             hover_name='Admin 1 Name',
             title='Vulnerability vs Severe Poverty Percentages'
         )
-        st.plotly_chart(fig_scatter, use_container_width=True)
+        st.plotly_chart(fig_scatter, use_container_width=True, key="scatter_chart")
     else:
         st.warning("No data available for this selection.")
 
 with tab3:
+    st.subheader("Global MPI Distribution")
+    if not filtered_df.empty:
+        # Calculate the average MPI per country for the map
+        map_data = filtered_df.groupby('Country ISO3', as_index=False)['MPI'].mean()
+        
+        # Create the choropleth map
+        fig_map = px.choropleth(
+            map_data,
+            locations="Country ISO3",
+            color="MPI",
+            hover_name="Country ISO3",
+            color_continuous_scale=px.colors.sequential.YlOrRd, 
+            title="Average MPI by Country (Hover for details)"
+        )
+        fig_map.update_geos(projection_type="natural earth", showcoastlines=True)
+        st.plotly_chart(fig_map, use_container_width=True, key="map_chart")
+    else:
+        st.warning("No data available for this selection.")
+
+with tab4:
     st.subheader("Cleaned Dataset Viewer")
     st.dataframe(filtered_df, use_container_width=True)
