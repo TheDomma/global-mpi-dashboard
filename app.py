@@ -25,16 +25,16 @@ df = load_data()
 # --- Sidebar Filters ---
 st.sidebar.header("Dashboard Filters")
 
-# Filter 1: Country Selection
-country_list = ['All'] + sorted(df['Country ISO3'].dropna().unique().tolist())
-selected_country = st.sidebar.selectbox("Select Country (ISO3)", country_list)
+# Filter 1: Country Selection (Now using full Country names!)
+country_list = ['All'] + sorted(df['Country'].dropna().unique().tolist())
+selected_country = st.sidebar.selectbox("Select Country", country_list)
 
 if selected_country != 'All':
-    filtered_df = df[df['Country ISO3'] == selected_country]
+    filtered_df = df[df['Country'] == selected_country]
 else:
     filtered_df = df.copy()
 
-# Filter 2: Deprivation Slider (Added for Max Interactivity Marks)
+# Filter 2: Deprivation Slider
 st.sidebar.markdown("### Advanced Filters")
 min_intensity = float(df['Intensity of Deprivation'].min())
 max_intensity = float(df['Intensity of Deprivation'].max())
@@ -42,7 +42,8 @@ selected_intensity = st.sidebar.slider(
     "Minimum Intensity of Deprivation (%)", 
     min_value=min_intensity, 
     max_value=max_intensity, 
-    value=min_intensity
+    value=min_intensity,
+    help="Filter regions by the severity of their poverty."
 )
 
 # Apply second filter
@@ -77,7 +78,7 @@ with tab1:
             top_10_mpi, 
             x='Admin 1 Name', 
             y='MPI', 
-            color='Country ISO3',
+            color='Country', # Now colored by full name
             title='Highest MPI Regions in Selection',
             labels={'Admin 1 Name': 'Region', 'MPI': 'MPI Value'}
         )
@@ -92,7 +93,7 @@ with tab2:
             filtered_df,
             x='Vulnerable to Poverty',
             y='In Severe Poverty',
-            color='Country ISO3',
+            color='Country', # Now colored by full name
             hover_name='Admin 1 Name',
             title='Vulnerability vs Severe Poverty Percentages'
         )
@@ -103,12 +104,14 @@ with tab2:
 with tab3:
     st.subheader("Global MPI Distribution")
     if not filtered_df.empty:
-        map_data = filtered_df.groupby('Country ISO3', as_index=False)['MPI'].mean()
+        # Calculate the average MPI per country for the map
+        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)['MPI'].mean()
+        
         fig_map = px.choropleth(
             map_data,
-            locations="Country ISO3",
+            locations="Country ISO3", # Must use ISO3 for the map to draw correctly
             color="MPI",
-            hover_name="Country ISO3",
+            hover_name="Country",     # But hover shows the beautiful full name!
             color_continuous_scale=px.colors.sequential.Reds, 
             title="Average MPI by Country (Hover for details)"
         )
