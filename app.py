@@ -6,7 +6,10 @@ import plotly.express as px
 st.set_page_config(page_title="Global MPI Dashboard", page_icon="🌍", layout="wide")
 
 # --- Title and Introduction ---
-st.title("🌍 Global Multidimensional Poverty Index (MPI)")
+st.markdown("<h1 style='text-align: center;'>Global Multidimensional Poverty Index (MPI)</h1>", unsafe_allow_html=True)
+st.image(
+    "2.png", 
+    use_container_width=True, )
 st.markdown("""
 **Designed for the Global Conference on Sustainability**
 This interactive dashboard explores the Global MPI dataset, providing high-level decision-makers and finance professionals with actionable insights into acute multidimensional poverty. This analysis directly aligns with **UN Sustainable Development Goal (SDG) 1: End poverty in all its forms everywhere.**
@@ -82,10 +85,8 @@ else:
 
 st.divider()
 
-st.divider()
-
 # --- Tabs for Visualizations ---
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Regional Analysis", "📈 Poverty Correlation", "🗺️ Global Map", "🗄️ Raw Data"])
+tab1, tab2, tab3, tab4 = st.tabs(["Regional Analysis", "Poverty Correlation", "Global Map", "Raw Data"])
 
 with tab1:
     st.subheader("Top 10 Regions by MPI")
@@ -141,3 +142,9 @@ with tab3:
 with tab4:
     st.subheader("Cleaned Dataset Viewer")
     st.dataframe(filtered_df, use_container_width=True)
+st.divider()
+
+st.image(
+    "1.png", 
+    use_container_width=True, 
+    caption="UN Sustainable Development Goal 1: End Poverty in all its forms everywhere.")
