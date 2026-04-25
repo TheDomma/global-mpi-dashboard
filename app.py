@@ -122,10 +122,11 @@ if view_mode == "Executive View":
     # ----------------------------------------
     
     # CSS UI Polish: Reduce padding and hide Streamlit header
+    st.subheader("High-Level Overview")
     st.markdown("""
     <style>
     .block-container {
-        padding-top: 1rem;
+
         padding-bottom: 1rem;
     }
     </style>
@@ -211,10 +212,7 @@ if view_mode == "Executive View":
         st.write("Adjust your filters to generate insights.")
 
 else:
-    # ----------------------------------------
-    # ORIGINAL DETAILED ANALYSIS TABS (UNTOUCHED)
-    # ----------------------------------------
-    
+
     # --- SECTION 1: Overview (Top KPIs) ---
     st.subheader("High-Level Overview")
     col1, col2, col3, col4 = st.columns(4)
