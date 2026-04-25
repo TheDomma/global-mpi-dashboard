@@ -6,7 +6,10 @@
 ![Pandas](https://img.shields.io/badge/Pandas-2C2D72?style=for-the-badge\&logo=pandas\&logoColor=white)
 
 ---
+🚀 Live Demo
 
+👉 Try the dashboard here:
+https://global-mpi-dashboard-ccskfs4zkbvfwdypm4ntq8.streamlit.app/
 ## 📌 Overview
 
 This project presents an interactive data science dashboard analyzing the **Global Multidimensional Poverty Index (MPI)** dataset.
