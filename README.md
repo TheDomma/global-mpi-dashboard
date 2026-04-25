@@ -6,15 +6,19 @@
 ![Pandas](https://img.shields.io/badge/Pandas-2C2D72?style=for-the-badge\&logo=pandas\&logoColor=white)
 
 ---
-🚀 Live Demo
 
-👉 Try the dashboard here:
+## 🚀 Live Application
+
+👉 **Try the dashboard here:**
 https://global-mpi-dashboard-ccskfs4zkbvfwdypm4ntq8.streamlit.app/
+
+---
+
 ## 📌 Overview
 
 This project presents an interactive data science dashboard analyzing the **Global Multidimensional Poverty Index (MPI)** dataset.
 
-The dashboard is designed to support **high-level decision-making** by providing clear, interactive insights into global poverty patterns, regional disparities, and key poverty drivers.
+The dashboard is designed to support **data-driven decision-making** by providing clear, interactive insights into global poverty patterns, regional disparities, and underlying drivers of poverty.
 
 Developed as part of the **5DATA004C Data Science Project Lifecycle** coursework, this project aligns with **UN Sustainable Development Goal 1 (SDG 1): End poverty in all its forms everywhere.**
 
@@ -24,26 +28,26 @@ Developed as part of the **5DATA004C Data Science Project Lifecycle** coursework
 
 ### 💡 Intelligent Insights
 
-* Automatically highlights **high-risk regions**
+* Highlights **high-risk regions**
 * Compares selected data with **global averages**
-* Provides **explanatory insights** (not just visuals)
+* Provides **causal explanations**, not just visuals
 
 ### 🎛️ Interactive Control Panel
 
 * Country and region filters
-* Poverty risk segmentation (Extreme / High / Moderate)
+* Poverty segmentation (Extreme / High / Moderate)
 * Dynamic metric selection:
 
   * MPI
   * Headcount Ratio
   * Intensity of Deprivation
-  * Vulnerability & Severe Poverty
-* Adjustable thresholds and Top-N selection
+  * Vulnerable & Severe Poverty
+* Adjustable thresholds and Top-N filtering
 
 ### 🗺️ Geospatial Analysis
 
-* Interactive choropleth map showing global poverty distribution
-* Hover-based multi-metric insights
+* Interactive **choropleth map**
+* Multi-metric hover insights
 
 ### 📈 Poverty Driver Analysis
 
@@ -55,13 +59,13 @@ Developed as part of the **5DATA004C Data Science Project Lifecycle** coursework
 
 ### 🍰 Risk Segmentation
 
-* Classification of regions into poverty levels
-* Donut chart visualization with key insights
+* Categorizes regions into poverty levels
+* Donut chart visualization with insights
 
 ### ⚖️ Country Comparison Tool
 
 * Compare two countries side-by-side
-* Dynamic performance indicators and visual comparison
+* Dynamic indicators and delta comparison
 
 ### 📊 Data Exploration
 
@@ -72,17 +76,17 @@ Developed as part of the **5DATA004C Data Science Project Lifecycle** coursework
 
 ## 📂 Project Structure
 
-```
+```plaintext
 global-mpi-dashboard/
 │
-├── app.py                     # Main Streamlit dashboard
-├── cleaned_global_mpi.csv     # Cleaned dataset used in analysis
-├── data_cleaning.ipynb        # Data preprocessing & feature engineering
+├── app.py                     # Main Streamlit application
+├── cleaned_global_mpi.csv     # Clean dataset used in dashboard
+├── data_cleaning.ipynb        # Data preprocessing notebook
 ├── global_mpi.csv             # Raw dataset
 ├── metadata-global-mpi...     # Dataset metadata
 ├── requirements.txt           # Dependencies
-├── 2.png                      # Dashboard header image
-└── README.md                  # Project documentation
+├── 2.png                      # Header image
+└── README.md                  # Documentation
 ```
 
 ---
@@ -116,7 +120,7 @@ python -m venv venv
 
 ---
 
-### 4. Activate Virtual Environment
+### 4. Activate Environment
 
 **Windows (PowerShell):**
 
@@ -153,36 +157,33 @@ streamlit run app.py
 ```
 
 Open in browser:
-
-```
 http://localhost:8501/
-```
 
 ---
 
 ## 🛠️ Technologies Used
 
-* **Python**
-* **Streamlit** (Dashboard Framework)
-* **Pandas** (Data Processing)
-* **Plotly** (Interactive Visualizations)
-* **Statsmodels** (Regression Analysis)
-* **PyCountry** (Country standardization)
+* Python
+* Streamlit
+* Pandas
+* Plotly
+* Statsmodels
+* PyCountry
 
 ---
 
 ## 🧠 Key Insights Delivered
 
 * Identification of **high-risk poverty regions**
-* Understanding of **poverty drivers (intensity vs headcount)**
-* Regional comparisons supporting **policy-level decisions**
-* Detection of **vulnerability trends and future risks**
+* Understanding **poverty drivers (intensity vs headcount)**
+* Regional comparisons for **policy-level decisions**
+* Detection of **future vulnerability trends**
 
 ---
 
 ## ⚠️ Troubleshooting
 
-### PowerShell Execution Error (Windows)
+### PowerShell Execution Policy Error
 
 ```bash
 Set-ExecutionPolicy Unrestricted -Scope CurrentUser
@@ -201,10 +202,11 @@ pip install -r requirements.txt
 
 ## 📬 Author
 
-Developed as part of the **University of Westminster – Data Science Project Lifecycle module (5DATA004C)**.
+Developed as part of the
+**University of Westminster – Data Science Project Lifecycle (5DATA004C)**
 
 ---
 
 ## ⭐ Final Note
 
-This dashboard is designed not just to visualize data, but to **translate data into actionable insight** — bridging the gap between analysis and real-world decision-making.
+This dashboard is designed not just to visualize data, but to **transform data into actionable insights** — bridging the gap between analysis and real-world decision-making.
