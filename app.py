@@ -6,7 +6,7 @@ import plotly.express as px
 st.set_page_config(page_title="Global MPI Dashboard", page_icon="🌍", layout="wide")
 
 # --- Title and Introduction ---
-st.markdown("<h1 style='text-align: center;'>🌍 Global Multidimensional Poverty Index (MPI)</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Global Multidimensional Poverty Index (MPI)</h1>", unsafe_allow_html=True)
 st.image("2.png", use_container_width=True)
 st.markdown("""
 <p font-size: 18px;'>
@@ -16,49 +16,114 @@ Designed for the Global Conference on Sustainability to provide policymakers and
 </p>
 """, unsafe_allow_html=True)
 
-# --- Data Loading ---
+# --- Data Loading & Preprocessing ---
 @st.cache_data
 def load_data():
     df = pd.read_csv('cleaned_global_mpi.csv')
+    # Pre-calculate Poverty Risk Level so it can be used in the sidebar
+    df['Poverty Risk Level'] = df['MPI'].apply(
+        lambda x: 'Extreme' if x > 0.4 else ('High' if x > 0.2 else 'Moderate')
+    )
     return df
 
 df = load_data()
 
-# --- Sidebar Filters ---
-st.sidebar.header("🎛️ Dashboard Filters")
+# --- Geographical Filters ---
+st.sidebar.subheader("🔻 Filters")
 
-# Filter 1: Country Selection
+# 2. Country Filter
 country_list = ['All'] + sorted(df['Country'].dropna().unique().tolist())
-selected_country = st.sidebar.selectbox("Select Country", country_list, help="Isolate data for a specific nation.")
+selected_country = st.sidebar.selectbox("Select Country", country_list, key="country_select")
 
+# 3. Dynamic Region Filter
 if selected_country != 'All':
-    filtered_df = df[df['Country'] == selected_country]
+    region_options = ['All'] + sorted(df[df['Country'] == selected_country]['Admin 1 Name'].dropna().unique().tolist())
 else:
-    filtered_df = df.copy()
+    region_options = ['All'] + sorted(df['Admin 1 Name'].dropna().unique().tolist())
+selected_region = st.sidebar.selectbox("Select Region", region_options, key="region_select")
 
-# Filter 2: Deprivation Slider
-st.sidebar.markdown("### 🎚️ Advanced Filters")
-min_intensity = float(df['Intensity of Deprivation'].min())
-max_intensity = float(df['Intensity of Deprivation'].max())
-selected_intensity = st.sidebar.slider(
-    "Minimum Intensity of Deprivation (%)", 
-    min_value=min_intensity, 
-    max_value=max_intensity, 
-    value=min_intensity,
-    help="Filter out regions to focus only on extreme poverty intensity."
+# 4. Poverty Category Multiselect
+category = st.sidebar.multiselect(
+    "Poverty Risk Level",
+    ["Extreme", "High", "Moderate"],
+    default=["Extreme", "High", "Moderate"],
+    help="Filter by the severity classification of the MPI.",
+    key="risk_category"
 )
 
-filtered_df = filtered_df[filtered_df['Intensity of Deprivation'] >= selected_intensity]
+# --- Analysis Settings ---
+st.sidebar.subheader("📊 Analysis Settings")
 
-# Filter 3: Top N Selector
-st.sidebar.markdown("### 📊 Chart Settings")
-top_n = st.sidebar.slider("Top N Regions to Display", min_value=5, max_value=50, value=10, step=5, help="Change how many regions appear in the Bar Chart.")
+# 5. Core Metric Selector
+selected_metric = st.sidebar.selectbox(
+    "Select Key Metric",
+    ["MPI", "Headcount Ratio", "Intensity of Deprivation", "Vulnerable to Poverty", "In Severe Poverty"],
+    key="core_metric"
+)
+
+# 6. Top N Selector
+top_n = st.sidebar.slider("Top N Regions to Display", 5, 50, 10, 5, key="top_n_slider")
+
+# --- Advanced Thresholds ---
+st.sidebar.subheader("⚙️ Advanced")
+
+# 7. Minimum MPI Threshold
+min_mpi = float(df['MPI'].min())
+max_mpi = float(df['MPI'].max())
+mpi_threshold = st.sidebar.slider("🚨 Minimum MPI Threshold", min_value=min_mpi, max_value=max_mpi, value=min_mpi, key="mpi_slider")
+
+# 8. Intensity Threshold
+min_intensity = float(df['Intensity of Deprivation'].min())
+max_intensity = float(df['Intensity of Deprivation'].max())
+selected_intensity = st.sidebar.slider("📈 Minimum Intensity (%)", min_value=min_intensity, max_value=max_intensity, value=min_intensity, key="intensity_slider")
+
+# --- Reset Button (Using Callbacks & Placed at the Bottom) ---
+def reset_filters():
+    # This callback runs BEFORE the app re-renders, guaranteeing a clean wipe
+    for key in st.session_state.keys():
+        del st.session_state[key]
+
+# --- Reset Button ---
+
+def reset_filters():
+    # Explicitly force every single key back to its exact starting value
+    st.session_state["search_input"] = ""
+    st.session_state["country_select"] = "All"
+    st.session_state["region_select"] = "All"
+    st.session_state["risk_category"] = ["Extreme", "High", "Moderate"]
+    st.session_state["core_metric"] = "MPI"
+    st.session_state["top_n_slider"] = 10
+    st.session_state["mpi_slider"] = float(df['MPI'].min())
+    st.session_state["intensity_slider"] = float(df['Intensity of Deprivation'].min())
+
+st.sidebar.button("🔄 Reset All Filters", on_click=reset_filters, use_container_width=True, type="primary")
 
 st.sidebar.divider()
 st.sidebar.info("Developed for the 5DATA004C Data Science Project Lifecycle coursework.")
 
+# ==========================================
+# APPLY ALL SIDEBAR FILTERS LOGIC
+# ==========================================
+filtered_df = df.copy()
+
+# Apply Geography
+if selected_country != 'All':
+    filtered_df = filtered_df[filtered_df['Country'] == selected_country]
+if selected_region != 'All':
+    filtered_df = filtered_df[filtered_df['Admin 1 Name'] == selected_region]
+
+# Apply Categories & Thresholds
+filtered_df = filtered_df[filtered_df['Poverty Risk Level'].isin(category)]
+filtered_df = filtered_df[filtered_df['MPI'] >= mpi_threshold]
+filtered_df = filtered_df[filtered_df['Intensity of Deprivation'] >= selected_intensity]
+
+
+# ==========================================
+# MAIN DASHBOARD RENDER
+# ==========================================
+
 # --- SECTION 1: Overview (Top KPIs) ---
-st.subheader("🥇 High-Level Overview")
+st.subheader("High-Level Overview")
 col1, col2, col3, col4 = st.columns(4)
 
 total_regions = len(filtered_df)
@@ -73,76 +138,157 @@ col4.metric("Avg Vulnerability", f"{avg_vuln:.1f}%")
 
 st.divider()
 
-# --- SECTION 2: Automated Insights Panel ---
-st.subheader("💡 Policymaker Insights")
+# --- SECTION 2: Dynamic Insights Panel ---
+st.subheader("Policymaker Insights💡")
 if not filtered_df.empty:
-    worst_region = filtered_df.loc[filtered_df['MPI'].idxmax()]
-    best_region = filtered_df.loc[filtered_df['MPI'].idxmin()]
+    worst_region = filtered_df.loc[filtered_df[selected_metric].idxmax()]
+    best_region = filtered_df.loc[filtered_df[selected_metric].idxmin()]
     
-    st.error(f"🔴 **Highest Risk:** **{worst_region['Admin 1 Name']}** ({worst_region['Country']}) has the highest extreme poverty risk with an MPI of **{worst_region['MPI']:.4f}**.")
-    st.success(f"🟢 **Lowest Risk:** **{best_region['Admin 1 Name']}** ({best_region['Country']}) reports the lowest acute poverty metrics in this selection.")
+    st.error(f"**Immediate Action Required:** **{worst_region['Admin 1 Name']}** ({worst_region['Country']}) has the highest **{selected_metric}** in this selection at **{worst_region[selected_metric]:.4f}**.")
+    st.success(f"**Lowest Risk:** **{best_region['Admin 1 Name']}** ({best_region['Country']}) reports the lowest **{selected_metric}** at **{best_region[selected_metric]:.4f}**.")
 else:
     st.warning("Adjust your filters to generate insights.")
 
 st.divider()
 
 # --- SECTION 3: Visualizations & Analysis ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Regional Breakdown", "🗺️ Global Heatmap", "📈 Scatter Plot", "🌡️ Driver Correlation", "🗄️ Raw Data"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "Regional Breakdown", 
+    "Global Heatmap", 
+    "Poverty Drivers", 
+    "Poverty Segmentation", 
+    "Driver Correlation", 
+    "Raw Data"
+])
 
 with tab1:
-    st.subheader(f"Top {top_n} Most Deprived Regions")
+    st.subheader(f"Top {top_n} Regions by {selected_metric}")
     if not filtered_df.empty:
-        top_regions = filtered_df.nlargest(top_n, 'MPI')
+        top_regions = filtered_df.nlargest(top_n, selected_metric)
         fig_bar = px.bar(
             top_regions, 
             x='Admin 1 Name', 
-            y='MPI', 
+            y=selected_metric, 
             color='Country',
-            title=f'Highest MPI Regions (Top {top_n})',
-            labels={'Admin 1 Name': 'Region', 'MPI': 'MPI Value'}
+            title=f'Highest {selected_metric} Regions (Top {top_n})',
+            labels={'Admin 1 Name': 'Region'}
         )
         st.plotly_chart(fig_bar, use_container_width=True, key="bar_chart")
+        
+        st.divider()
+        st.subheader(f"Regional Leaderboards: {selected_metric}")
+        col_worst, col_best = st.columns(2)
+        
+        with col_worst:
+            st.error("**Top 10 Highest Risk (Worst)**")
+            ranked_worst = filtered_df.sort_values(by=selected_metric, ascending=False)
+            st.dataframe(ranked_worst[['Country', 'Admin 1 Name', selected_metric]].head(10), use_container_width=True, hide_index=True)
+            
+        with col_best:
+            st.success("**Top 10 Lowest Risk (Best)**")
+            ranked_best = filtered_df.sort_values(by=selected_metric, ascending=True)
+            st.dataframe(ranked_best[['Country', 'Admin 1 Name', selected_metric]].head(10), use_container_width=True, hide_index=True)
+
     else:
         st.warning("No data available.")
 
 with tab2:
-    st.subheader("Geospatial Poverty Distribution")
+    st.subheader(f"Geospatial Distribution: {selected_metric}")
     if not filtered_df.empty:
-        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)['MPI'].mean()
+        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)[selected_metric].mean()
         fig_map = px.choropleth(
             map_data,
             locations="Country ISO3",
-            color="MPI",
+            color=selected_metric,
             hover_name="Country",
             color_continuous_scale=px.colors.sequential.Reds, 
-            title="Average MPI by Country"
+            title=f"Average {selected_metric} by Country"
         )
         fig_map.update_geos(projection_type="natural earth", showcoastlines=True)
-        fig_map.update_traces(hovertemplate='<b>%{hovertext}</b><br>Average MPI: %{z:.3f}')
+        fig_map.update_traces(hovertemplate='<b>%{hovertext}</b><br>' + selected_metric + ': %{z:.3f}')
         st.plotly_chart(fig_map, use_container_width=True, key="map_chart")
     else:
         st.warning("No data available.")
 
 with tab3:
-    st.subheader("Severe Poverty vs Vulnerability")
-    if not filtered_df.empty:
-        fig_scatter = px.scatter(
+    st.subheader("Poverty Drivers Breakdown")
+    st.markdown("Analyze whether poverty is driven more by the *number of people* affected (Headcount) or the *severity* of their poverty (Intensity).")
+    
+    if not filtered_df.empty and len(filtered_df) > 2:
+        # Chart 1
+        fig_hc = px.scatter(
             filtered_df,
-            x='Vulnerable to Poverty',
-            y='In Severe Poverty',
-            color='Country', # Now colored by full name
+            x='Headcount Ratio',
+            y='MPI',
+            color='Country',
             hover_name='Admin 1 Name',
-            title='Vulnerability vs Severe Poverty Percentages'
+            trendline='ols',
+            title='MPI vs. Headcount Ratio',
+            labels={'Headcount Ratio': 'Headcount Ratio (%)', 'MPI': 'MPI Value'}
         )
-        st.plotly_chart(fig_scatter, use_container_width=True, key="scatter_chart")
+        st.plotly_chart(fig_hc, use_container_width=True, key="scatter_hc")
+        
+        st.divider()
+        
+        # Chart 2
+        fig_int = px.scatter(
+            filtered_df,
+            x='Intensity of Deprivation',
+            y='MPI',
+            color='Country',
+            hover_name='Admin 1 Name',
+            trendline='ols',
+            title='MPI vs. Intensity of Deprivation',
+            labels={'Intensity of Deprivation': 'Intensity of Deprivation (%)', 'MPI': 'MPI Value'}
+        )
+        st.plotly_chart(fig_int, use_container_width=True, key="scatter_int")
+        
+        st.info("**Insight:** Higher MPI is strongly driven by high deprivation intensity rather than just the population affected. The slope of the trendline helps identify how severe poverty compounding affects the overall index.")
     else:
-        st.warning("No data available for these filter parameters.")
+        st.warning("Not enough data to calculate trendlines. Please select 'All' countries or loosen your filter parameters.")
 
 with tab4:
+    st.subheader("Poverty Risk Segmentation")
+    st.markdown("Categorizing regions into risk levels based on their MPI score to quickly identify the proportion of areas needing critical intervention.")
+    
+    if not filtered_df.empty:
+        col_pie, col_insight = st.columns([2, 1])
+        
+        with col_pie:
+            color_map = {
+                'Extreme': '#d62728', 
+                'High': '#ff7f0e', 
+                'Moderate': '#2ca02c'   
+            }
+            
+            fig_pie = px.pie(
+                filtered_df, 
+                names='Poverty Risk Level', 
+                title='Proportion of Regions by Poverty Risk',
+                color='Poverty Risk Level',
+                color_discrete_map=color_map,
+                hole=0.4 
+            )
+            fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+            st.plotly_chart(fig_pie, use_container_width=True, key="pie_chart")
+            
+        with col_insight:
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            extreme_count = len(filtered_df[filtered_df['Poverty Risk Level'] == 'Extreme'])
+            total_count = len(filtered_df)
+            extreme_pct = (extreme_count / total_count * 100) if total_count > 0 else 0
+            
+            if extreme_pct > 0:
+                st.error(f"🚨 **Critical Insight:**\n\n**{extreme_pct:.1f}%** of the selected regions fall into **Extreme Poverty** (MPI > 0.4). These {extreme_count} regions require immediate, targeted humanitarian intervention.")
+            else:
+                st.success(f"✅ **Positive Insight:**\n\n**0%** of the selected regions fall into Extreme Poverty. Continued scaffolding is required for High and Moderate risk areas.")
+    else:
+        st.warning("No data available.")
+
+with tab5:
     st.subheader("Poverty Driver Correlation")
     st.markdown("Understand how different aspects of poverty (Vulnerability vs. Severe Poverty) interact.")
     if len(filtered_df) > 1:
-        # Correlation Heatmap
         numeric_cols = ['MPI', 'Headcount Ratio', 'Intensity of Deprivation', 'Vulnerable to Poverty', 'In Severe Poverty']
         corr_matrix = filtered_df[numeric_cols].corr()
         
@@ -157,9 +303,9 @@ with tab4:
     else:
         st.warning("Not enough data to calculate correlations. Please select 'All' countries or adjust sliders.")
 
-with tab5:
+with tab6:
     st.subheader("Sortable Database")
-    st.dataframe(filtered_df, use_container_width=True)
+    st.dataframe(filtered_df, use_container_width=True, hide_index=True)
     
     st.markdown("### Export Tools")
     csv = filtered_df.to_csv(index=False).encode('utf-8')
