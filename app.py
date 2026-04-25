@@ -142,7 +142,7 @@ if not filtered_df.empty:
     worst_region = filtered_df.loc[filtered_df[selected_metric].idxmax()]
     best_region = filtered_df.loc[filtered_df[selected_metric].idxmin()]
     
-    st.error(f"**Immediate Action Required:** **{worst_region['Admin 1 Name']}** ({worst_region['Country']}) has the highest **{selected_metric}** in this selection at **{worst_region[selected_metric]:.4f}**.\n\n"
+    st.error(f"**Critical High-Risk Region Identified:** **{worst_region['Admin 1 Name']}** ({worst_region['Country']}) has the highest **{selected_metric}** in this selection at **{worst_region[selected_metric]:.4f}**.\n\n"
              f"*Causal Driver Analysis: This is likely driven by an Intensity of Deprivation of {worst_region['Intensity of Deprivation']:.1f}% and {worst_region['In Severe Poverty']:.1f}% of its population in severe poverty.*")
     
     st.success(f"**Lowest Risk:** **{best_region['Admin 1 Name']}** ({best_region['Country']}) reports the lowest **{selected_metric}** at **{best_region[selected_metric]:.4f}**.")
@@ -159,7 +159,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "Poverty Segmentation", 
     "Driver Correlation", 
     "Compare Nations",
-    "Raw Data"
+    "Data Explorer"
 ])
 
 with tab1:
@@ -207,6 +207,7 @@ with tab2:
             title=f"Average {selected_metric} by Country"
         )
         fig_map.update_geos(projection_type="natural earth", showcoastlines=True)
+        fig_map.update_layout(margin={"r":0,"t":30,"l":0,"b":0})
         st.plotly_chart(fig_map, use_container_width=True, key="map_chart")
     else:
         st.warning("No data available.")
