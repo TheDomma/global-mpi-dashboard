@@ -34,6 +34,7 @@ Developed as part of the **5DATA004C Data Science Project Lifecycle** coursework
 
 ### 🎛️ Interactive Control Panel
 
+*Dashboard View - Executive View /Detailed Analysis
 * Country and region filters
 * Poverty segmentation (Extreme / High / Moderate)
 * Dynamic metric selection:
