@@ -10,7 +10,7 @@
 ## 🚀 Live Application
 
 👉 **Try the dashboard here:**
-https://global-mpi-dashboard-ccskfs4zkbvfwdypm4ntq8.streamlit.app/
+[https://global-mpi-dashboard-ccskfs4zkbvfwdypm4ntq8.streamlit.app/](https://global-mpi-dashboard-qzkabd2apamzrb2hdxfy2n.streamlit.app/)
 
 ---
 
