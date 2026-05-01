@@ -130,10 +130,24 @@ if view_mode == "Executive View":
         padding-bottom: 1rem;
     }
     div[data-testid="stMetric"] {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: linear-gradient(145deg, rgba(23, 36, 75, 0.95), rgba(13, 23, 51, 0.95));
+        border: 1px solid rgba(71, 203, 255, 0.4);
         border-radius: 0.75rem;
-        padding: 0.5rem;
+        padding: 0.75rem;
+        box-shadow: 0 0 24px rgba(51, 193, 255, 0.18);
+    }
+    div[data-testid="stMetric"] * {
+        color: #ecf6ff !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stMetricLabel"] p,
+    [data-testid="stMetricValue"] p,
+    [data-testid="stMetricDelta"] p {
+        color: #ecf6ff !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-weight: 700 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -146,7 +160,7 @@ if view_mode == "Executive View":
     avg_vuln = filtered_df['Vulnerable to Poverty'].mean() if not filtered_df.empty else 0
 
     col1.metric("Regions Selected", f"{total_regions}")
-    col2.metric(f"Avg {selected_metric}", f"{avg_metric:.4f}")
+    col2.metric(f"Avg {selected_metric}", format_metric_value(selected_metric, avg_metric))
     col3.metric("Avg Severe Poverty", f"{avg_severe:.1f}%")
     col4.metric("Avg Vulnerability", f"{avg_vuln:.1f}%")
 
