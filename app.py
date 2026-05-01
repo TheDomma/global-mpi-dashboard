@@ -27,6 +27,21 @@ def load_data():
 
 df = load_data()
 
+PERCENT_METRICS = {
+    "Headcount Ratio",
+    "Intensity of Deprivation",
+    "Vulnerable to Poverty",
+    "In Severe Poverty",
+}
+
+
+def format_metric_value(metric_name, value):
+    if pd.isna(value):
+        return "N/A"
+    if metric_name in PERCENT_METRICS:
+        return f"{value:.1f}%"
+    return f"{value:.4f}"
+
 # ==========================================
 # SIDEBAR: THE ULTIMATE CONTROL PANEL
 # ==========================================
