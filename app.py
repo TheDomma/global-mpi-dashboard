@@ -9,7 +9,7 @@ st.set_page_config(page_title="Global MPI Dashboard", page_icon="🌍", layout="
 st.markdown("<h1 style='text-align: center;'>Global Multidimensional Poverty Index (MPI)</h1>", unsafe_allow_html=True)
 st.image("2.png", use_container_width=True)
 st.markdown("""
-<p font-size: 18px;'>
+<p style='font-size: 18px;'>
 <strong>Understanding global poverty patterns and identifying high-risk regions and drivers.</strong><br>
 Designed for the Global Conference on Sustainability to provide policymakers and finance professionals with actionable insights.<br>
 <em>Aligns with UN Sustainable Development Goal (SDG) 1: End poverty in all its forms everywhere.</em>
@@ -126,8 +126,28 @@ if view_mode == "Executive View":
     st.markdown("""
     <style>
     .block-container {
-
+        padding-top: 1rem;
         padding-bottom: 1rem;
+    }
+    div[data-testid="stMetric"] {
+        background: linear-gradient(145deg, rgba(23, 36, 75, 0.95), rgba(13, 23, 51, 0.95));
+        border: 1px solid rgba(71, 203, 255, 0.4);
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        box-shadow: 0 0 24px rgba(51, 193, 255, 0.18);
+    }
+    div[data-testid="stMetric"] * {
+        color: #ecf6ff !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stMetricLabel"] p,
+    [data-testid="stMetricValue"] p,
+    [data-testid="stMetricDelta"] p {
+        color: #ecf6ff !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-weight: 700 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -140,7 +160,7 @@ if view_mode == "Executive View":
     avg_vuln = filtered_df['Vulnerable to Poverty'].mean() if not filtered_df.empty else 0
 
     col1.metric("Regions Selected", f"{total_regions}")
-    col2.metric(f"Avg {selected_metric}", f"{avg_metric:.4f}")
+    col2.metric(f"Avg {selected_metric}", format_metric_value(selected_metric, avg_metric))
     col3.metric("Avg Severe Poverty", f"{avg_severe:.1f}%")
     col4.metric("Avg Vulnerability", f"{avg_vuln:.1f}%")
 
@@ -167,7 +187,7 @@ if view_mode == "Executive View":
         else:
             fig_scatter = None
 
-        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)[['MPI', 'Headcount Ratio', 'Intensity of Deprivation']].mean()
+        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)[['MPI', 'Headcount Ratio', 'Intensity of Deprivation', 'Vulnerable to Poverty', 'In Severe Poverty']].mean()
         fig_map = px.choropleth(
             map_data, locations="Country ISO3", color=selected_metric, hover_name="Country", color_continuous_scale=px.colors.sequential.Reds, title='Global Distribution'
         )
