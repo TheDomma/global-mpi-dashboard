@@ -9,7 +9,7 @@ st.set_page_config(page_title="Global MPI Dashboard", page_icon="🌍", layout="
 st.markdown("<h1 style='text-align: center;'>Global Multidimensional Poverty Index (MPI)</h1>", unsafe_allow_html=True)
 st.image("2.png", use_container_width=True)
 st.markdown("""
-<p font-size: 18px;'>
+<p style='font-size: 18px;'>
 <strong>Understanding global poverty patterns and identifying high-risk regions and drivers.</strong><br>
 Designed for the Global Conference on Sustainability to provide policymakers and finance professionals with actionable insights.<br>
 <em>Aligns with UN Sustainable Development Goal (SDG) 1: End poverty in all its forms everywhere.</em>
@@ -126,8 +126,14 @@ if view_mode == "Executive View":
     st.markdown("""
     <style>
     .block-container {
-
+        padding-top: 1rem;
         padding-bottom: 1rem;
+    }
+    div[data-testid="stMetric"] {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 0.5rem;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -167,7 +173,7 @@ if view_mode == "Executive View":
         else:
             fig_scatter = None
 
-        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)[['MPI', 'Headcount Ratio', 'Intensity of Deprivation']].mean()
+        map_data = filtered_df.groupby(['Country ISO3', 'Country'], as_index=False)[['MPI', 'Headcount Ratio', 'Intensity of Deprivation', 'Vulnerable to Poverty', 'In Severe Poverty']].mean()
         fig_map = px.choropleth(
             map_data, locations="Country ISO3", color=selected_metric, hover_name="Country", color_continuous_scale=px.colors.sequential.Reds, title='Global Distribution'
         )
