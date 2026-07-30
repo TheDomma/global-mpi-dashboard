@@ -110,7 +110,7 @@ def reset_filters():
 
 st.sidebar.button("🔄 Reset All Filters", on_click=reset_filters, use_container_width=True, type="primary")
 st.sidebar.divider()
-st.sidebar.info("Developed for the 5DATA004C Data Science Project Lifecycle coursework.")
+st.sidebar.info("Developed by Muditha Dodamwala.")
 
 # ==========================================
 # APPLY ALL SIDEBAR FILTERS LOGIC
